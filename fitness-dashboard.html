@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Elite Training Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: #222222;
+      --accent: #e8ff47;
+      --accent2: #ff4747;
+      --accent3: #47b8ff;
+      --text: #f0f0f0;
+      --muted: #666;
+      --muted2: #444;
+      --success: #47ff8a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    .header-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* LAYOUT */
+    .app {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: calc(100vh - 65px);
+      position: sticky;
+      top: 65px;
+    }
+
+    .stats-panel {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .stat-input {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-input label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .stat-input input,
+    .stat-input select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      padding: 8px 10px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    .stat-input input:focus,
+    .stat-input select:focus {
+      border-color: var(--accent);
+    }
+
+    .stat-input select option {
+      background: var(--surface2);
+    }
+
+    .lifts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .lift-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .lift-badge label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .lift-badge input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      outline: none;
+      width: 100%;
+      padding: 2px 0;
+      transition: border-color 0.2s;
+    }
+
+    .lift-badge input:focus {
+      border-bottom-color: var(--accent);
+    }
+
+    .lift-badge .unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+    }
+
+    /* NAV */
+    .nav-modules {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px 12px 4px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: left;
+      width: 100%;
+    }
+
+    .nav-btn:hover {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    .nav-icon {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* MAIN */
+    .main {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .module-header {
+      padding: 32px 40px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .module-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .module-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 4px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .module-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* CONTEXT PANEL */
+    .context-area {
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ctx-input {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ctx-input label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .ctx-input input,
+    .ctx-input select,
+    .ctx-input textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 10px 12px;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    .ctx-input input:focus,
+    .ctx-input select:focus,
+    .ctx-input textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .ctx-input textarea {
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    /* GENERATE BTN */
+    .generate-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 6px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: fit-content;
+    }
+
+    .generate-btn:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .generate-btn .btn-icon {
+      font-size: 1.1rem;
+    }
+
+    /* RESPONSE AREA */
+    .response-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 40px;
+    }
+
+    .welcome-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 400px;
+      gap: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .welcome-icon {
+      font-size: 4rem;
+      opacity: 0.3;
+    }
+
+    .welcome-state h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      color: var(--muted2);
+    }
+
+    .welcome-state p {
+      font-size: 0.85rem;
+      max-width: 400px;
+      line-height: 1.6;
+    }
+
+    /* AI RESPONSE */
+    .ai-response {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .response-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .response-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-badge {
+      background: var(--accent);
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 4px 8px;
+      border-radius: 3px;
+    }
+
+    .response-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .response-content {
+      padding: 28px;
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: #ccc;
+      white-space: pre-wrap;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .response-content h1,
+    .response-content h2,
+    .response-content h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 3px;
+      color: var(--text);
+      margin: 24px 0 12px;
+    }
+
+    .response-content h1 {
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+
+    .response-content h2 {
+      font-size: 1.4rem;
+    }
+
+    .response-content h3 {
+      font-size: 1.1rem;
+      color: var(--accent3);
+    }
+
+    .response-content strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .response-content ul,
+    .response-content ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    .response-content li {
+      margin: 4px 0;
+    }
+
+    /* LOADING */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px;
+      gap: 24px;
+    }
+
+    .loading-bars {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+      height: 40px;
+    }
+
+    .bar {
+      width: 6px;
+      background: var(--accent);
+      border-radius: 3px;
+      animation: barBounce 1.2s ease-in-out infinite;
+    }
+
+    .bar:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes barBounce {
+
+      0%,
+      100% {
+        height: 8px;
+        opacity: 0.4;
+      }
+
+      50% {
+        height: 36px;
+        opacity: 1;
+      }
+    }
+
+    .loading-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* ERROR */
+    .error-state {
+      background: rgba(255, 71, 71, 0.1);
+      border: 1px solid var(--accent2);
+      border-radius: 8px;
+      padding: 24px;
+      color: var(--accent2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted2);
+    }
+
+    /* ANIMATED ENTRY */
+    .module-view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .module-view.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* METRICS STRIP */
+    .metrics-strip {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      overflow-x: auto;
+    }
+
+    .metric-cell {
+      flex: 1;
+      min-width: 120px;
+      padding: 16px 20px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-cell:last-child {
+      border-right: none;
+    }
+
+    .metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .metric-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .metric-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--muted);
+    }
+
+    /* WILKS SCORE */
+    .wilks-cell {
+      background: linear-gradient(135deg, rgba(232, 255, 71, 0.08), transparent);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div>
+      <div class="logo">FORGE<span>.</span></div>
+      <div class="header-tag">Elite Training Intelligence System</div>
+    </div>
+    <div class="header-tag">
+      <span class="status-dot"></span>AI ENGINE ACTIVE
+    </div>
+  </header>
+
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="stats-panel">
+        <div class="panel-label">Athlete Profile</div>
+
+        <div class="stat-row">
+          <div class="stat-input">
+            <label>Weight (kg)</label>
+            <input type="number" id="weight" placeholder="80" value="">
+          </div>
+          <div class="stat-input">
+            <label>Height (cm)</label>
+            <input type="number" id="height" placeholder="178" value="">
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-input">
+            <label>Age</label>
+            <input type="number" id="age" placeholder="28" value="">
+          </div>
+          <div class="stat-input">
+            <label>Sex</label>
+            <select id="sex">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-input">
+            <label>Training Days/wk</label>
+            <input type="number" id="trainingDays" placeholder="4" min="2" max="7">
+          </div>
+          <div class="stat-input">
+            <label>Session (min)</label>
+            <input type="number" id="sessionLength" placeholder="75" min="30" max="180">
+          </div>
+        </div>
+        <div class="stat-input" style="margin-bottom:8px">
+          <label>Equipment</label>
+          <select id="equipment">
+            <option value="full commercial gym">Full Commercial Gym</option>
+            <option value="home gym with barbells and dumbbells">Home Gym (Barbell + DB)</option>
+            <option value="dumbbells only">Dumbbells Only</option>
+            <option value="bodyweight only">Bodyweight Only</option>
+            <option value="powerlifting gym">Powerlifting Gym</option>
+          </select>
+        </div>
+
+        <div class="panel-label" style="margin-top:16px">1 Rep Maxes</div>
+        <div class="lifts-grid">
+          <div class="lift-badge">
+            <label>Squat</label>
+            <input type="number" id="squat" placeholder="120">
+            <span class="unit">kg</span>
+          </div>
+          <div class="lift-badge">
+            <label>Bench</label>
+            <input type="number" id="bench" placeholder="90">
+            <span class="unit">kg</span>
+          </div>
+          <div class="lift-badge">
+            <label>Deadlift</label>
+            <input type="number" id="deadlift" placeholder="150">
+            <span class="unit">kg</span>
+          </div>
+          <div class="lift-badge">
+            <label>OHP</label>
+            <input type="number" id="ohp" placeholder="60">
+            <span class="unit">kg</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-modules">
+        <div class="nav-label">AI Modules</div>
+        <button class="nav-btn active" data-module="programme" onclick="switchModule('programme', this)">
+          <span class="nav-icon">📋</span> 12-Week Programme
+        </button>
+        <button class="nav-btn" data-module="plateau" onclick="switchModule('plateau', this)">
+          <span class="nav-icon">📈</span> Plateau Breaker
+        </button>
+        <button class="nav-btn" data-module="weakpoints" onclick="switchModule('weakpoints', this)">
+          <span class="nav-icon">🎯</span> Weak Point Analysis
+        </button>
+        <button class="nav-btn" data-module="recovery" onclick="switchModule('recovery', this)">
+          <span class="nav-icon">😴</span> Recovery Protocol
+        </button>
+        <button class="nav-btn" data-module="injury" onclick="switchModule('injury', this)">
+          <span class="nav-icon">🛡️</span> Injury Prevention
+        </button>
+        <button class="nav-btn" data-module="tracking" onclick="switchModule('tracking', this)">
+          <span class="nav-icon">📊</span> Tracking System
+        </button>
+        <button class="nav-btn" data-module="recomp" onclick="switchModule('recomp', this)">
+          <span class="nav-icon">⚡</span> Recomp Blueprint
+        </button>
+      </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- METRICS STRIP -->
+      <div class="metrics-strip" id="metricsStrip">
+        <div class="metric-cell">
+          <div class="metric-label">Total Load</div>
+          <div class="metric-val" id="m-total">—</div>
+          <div class="metric-unit">kg (sum 1RM)</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">S/B Ratio</div>
+          <div class="metric-val" id="m-sb">—</div>
+          <div class="metric-unit">squat / bench</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">D/S Ratio</div>
+          <div class="metric-val" id="m-ds">—</div>
+          <div class="metric-unit">dead / squat</div>
+        </div>
+        <div class="metric-cell wilks-cell">
+          <div class="metric-label">Wilks Score</div>
+          <div class="metric-val" id="m-wilks">—</div>
+          <div class="metric-unit">competitive benchmark</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-label">BMI</div>
+          <div class="metric-val" id="m-bmi">—</div>
+          <div class="metric-unit">body mass index</div>
+        </div>
+      </div>
+
+      <!-- MODULE: PROGRAMME -->
+      <div class="module-view active" id="mod-programme">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 01</div>
+          <div class="module-title">12-WEEK PROGRAMME</div>
+          <div class="module-desc">Generate a complete periodised training programme built around your stats, lifts,
+            schedule, and goals. Every session written in full.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Any additional context (injuries, preferences, past programmes)</label>
+              <textarea id="prog-context"
+                placeholder="e.g. I have a history of lower back sensitivity, prefer compound movements, ran nSuns before..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('programme')">
+            <span class="btn-icon">⚡</span> GENERATE PROGRAMME
+          </button>
+        </div>
+        <div class="response-area" id="resp-programme">
+          <div class="welcome-state">
+            <div class="welcome-icon">📋</div>
+            <h3>READY TO BUILD</h3>
+            <p>Fill in your athlete profile on the left, then hit generate. Your complete 12-week programme will appear
+              here.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: PLATEAU -->
+      <div class="module-view" id="mod-plateau">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 02</div>
+          <div class="module-title">PLATEAU BREAKER</div>
+          <div class="module-desc">Stuck on your lifts? Get a thorough diagnosis across programming, recovery,
+            nutrition, and psychology — then an 8-week plan to break through.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input">
+              <label>Weeks stuck on lifts</label>
+              <input type="number" id="plateau-weeks" placeholder="6">
+            </div>
+            <div class="ctx-input">
+              <label>Avg sleep (hours)</label>
+              <input type="number" id="plateau-sleep" placeholder="7" step="0.5">
+            </div>
+            <div class="ctx-input">
+              <label>Stress level</label>
+              <select id="plateau-stress">
+                <option value="low">Low</option>
+                <option value="moderate">Moderate</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div class="ctx-input">
+              <label>Stress source</label>
+              <input type="text" id="plateau-stresssrc" placeholder="work / family / etc">
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Current programme (brief description)</label>
+              <textarea id="plateau-prog"
+                placeholder="e.g. 4-day upper/lower, 3-4 sets of compounds at 75-85% 1RM, some accessory work..."></textarea>
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Nutrition overview (calories, protein, timing)</label>
+              <textarea id="plateau-nutrition"
+                placeholder="e.g. ~2800 calories, ~180g protein, 3 meals per day, no post-workout nutrition..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('plateau')">
+            <span class="btn-icon">💥</span> DIAGNOSE & BREAK PLATEAU
+          </button>
+        </div>
+        <div class="response-area" id="resp-plateau">
+          <div class="welcome-state">
+            <div class="welcome-icon">📈</div>
+            <h3>PLATEAU ANALYSIS</h3>
+            <p>Describe your situation above and get a comprehensive root cause analysis with an 8-week breakthrough
+              plan.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: WEAK POINTS -->
+      <div class="module-view" id="mod-weakpoints">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 03</div>
+          <div class="module-title">WEAK POINT ANALYSIS</div>
+          <div class="module-desc">Identify aesthetic and performance weak points. Get root cause analysis, corrective
+            exercises, and integration protocols.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Aesthetic weak points (visually underdeveloped muscle groups)</label>
+              <textarea id="wp-aesthetic"
+                placeholder="e.g. rear delts, upper chest, hamstrings, calves, rear delts..."></textarea>
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Performance weak points (where you fail or lose form in your lifts)</label>
+              <textarea id="wp-performance"
+                placeholder="e.g. squat collapses at the bottom, bench stalls off the chest, deadlift hitches at the knee..."></textarea>
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Current programme (brief)</label>
+              <textarea id="wp-prog" placeholder="e.g. 4-day PPL, heavy compounds + accessories..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('weakpoints')">
+            <span class="btn-icon">🎯</span> ANALYSE WEAK POINTS
+          </button>
+        </div>
+        <div class="response-area" id="resp-weakpoints">
+          <div class="welcome-state">
+            <div class="welcome-icon">🎯</div>
+            <h3>WEAK POINT DIAGNOSIS</h3>
+            <p>List your aesthetic and performance weak points to get a prioritised action plan with correctives and
+              timelines.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: RECOVERY -->
+      <div class="module-view" id="mod-recovery">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 04</div>
+          <div class="module-title">RECOVERY PROTOCOL</div>
+          <div class="module-desc">A complete lifestyle system — sleep, mobility, nervous system regulation, deload
+            strategy, nutrition, and supplementation for maximum recovery.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input">
+              <label>Current avg sleep (hrs)</label>
+              <input type="number" id="rec-sleep" placeholder="7" step="0.5">
+            </div>
+            <div class="ctx-input">
+              <label>Work schedule</label>
+              <select id="rec-schedule">
+                <option value="standard 9-5">Standard 9-5</option>
+                <option value="shift work with irregular hours">Shift Work</option>
+                <option value="remote / flexible">Remote / Flexible</option>
+                <option value="physically demanding job">Physical Job</option>
+              </select>
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Any specific recovery challenges</label>
+              <textarea id="rec-context"
+                placeholder="e.g. poor sleep quality, high work stress, tight hips, travel frequently..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('recovery')">
+            <span class="btn-icon">😴</span> BUILD RECOVERY PROTOCOL
+          </button>
+        </div>
+        <div class="response-area" id="resp-recovery">
+          <div class="welcome-state">
+            <div class="welcome-icon">😴</div>
+            <h3>RECOVERY SYSTEM</h3>
+            <p>Get a complete recovery lifestyle system covering sleep, mobility, deloads, nutrition, and
+              supplementation.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: INJURY -->
+      <div class="module-view" id="mod-injury">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 05</div>
+          <div class="module-title">INJURY PREVENTION</div>
+          <div class="module-desc">Proactive prehab, smart warm-up protocols, technique adjustments, and a framework for
+            training around niggles — stay pain-free for the long term.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Current niggles, pain, or injury history</label>
+              <textarea id="inj-history"
+                placeholder="e.g. occasional left knee pain during squats, past rotator cuff issue right shoulder, lower back tightness..."></textarea>
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Movement concerns or weak areas</label>
+              <textarea id="inj-movement"
+                placeholder="e.g. hip flexors always tight, poor shoulder mobility, anterior pelvic tilt..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('injury')">
+            <span class="btn-icon">🛡️</span> BUILD PREHAB PLAN
+          </button>
+        </div>
+        <div class="response-area" id="resp-injury">
+          <div class="welcome-state">
+            <div class="welcome-icon">🛡️</div>
+            <h3>INJURY PREVENTION</h3>
+            <p>Get a comprehensive physiotherapy-level prehab plan, warm-up protocol, and technique adjustments for
+              long-term health.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: TRACKING -->
+      <div class="module-view" id="mod-tracking">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 06</div>
+          <div class="module-title">TRACKING SYSTEM</div>
+          <div class="module-desc">A professional athlete-grade monitoring framework — weekly check-ins, photo
+            protocols, measurements, decision trees, and progress psychology.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input">
+              <label>Primary goal</label>
+              <select id="track-goal">
+                <option value="hypertrophy (muscle building)">Hypertrophy</option>
+                <option value="strength">Strength</option>
+                <option value="body recomposition">Recomposition</option>
+                <option value="fat loss while maintaining muscle">Fat Loss</option>
+              </select>
+            </div>
+            <div class="ctx-input">
+              <label>Programme duration (weeks)</label>
+              <input type="number" id="track-weeks" placeholder="12">
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>What tracking methods have you used before?</label>
+              <textarea id="track-context"
+                placeholder="e.g. I've logged workouts in a notebook, tracked calories on MyFitnessPal, never taken progress photos..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('tracking')">
+            <span class="btn-icon">📊</span> BUILD TRACKING SYSTEM
+          </button>
+        </div>
+        <div class="response-area" id="resp-tracking">
+          <div class="welcome-state">
+            <div class="welcome-icon">📊</div>
+            <h3>TRACKING FRAMEWORK</h3>
+            <p>Get a complete data-driven monitoring system with weekly check-ins, decision trees, and progress
+              psychology.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE: RECOMP -->
+      <div class="module-view" id="mod-recomp">
+        <div class="module-header">
+          <div class="module-tag">// MODULE 07</div>
+          <div class="module-title">RECOMP BLUEPRINT</div>
+          <div class="module-desc">Build muscle and lose fat simultaneously. A complete 16-week system with training,
+            nutrition, cardio, and adjustment checkpoints.</div>
+        </div>
+        <div class="context-area">
+          <div class="context-grid">
+            <div class="ctx-input">
+              <label>Body fat % (approx)</label>
+              <input type="number" id="recomp-bf" placeholder="18" step="0.5">
+            </div>
+            <div class="ctx-input">
+              <label>Years training consistently</label>
+              <input type="number" id="recomp-years" placeholder="2" step="0.5">
+            </div>
+            <div class="ctx-input" style="grid-column: 1/-1">
+              <label>Current diet approach & any specific goals</label>
+              <textarea id="recomp-context"
+                placeholder="e.g. currently eating at maintenance ~2800 cals, 150g protein, want to drop from ~20% to ~14% while keeping all my lifts..."></textarea>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generate('recomp')">
+            <span class="btn-icon">⚡</span> BUILD RECOMP BLUEPRINT
+          </button>
+        </div>
+        <div class="response-area" id="resp-recomp">
+          <div class="welcome-state">
+            <div class="welcome-icon">⚡</div>
+            <h3>RECOMPOSITION BLUEPRINT</h3>
+            <p>Get a complete 16-week recomposition system covering training, nutrition, cardio strategy, and adjustment
+              protocols.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ─── METRICS ─────────────────────────────────────────────────────────────────
+    function updateMetrics() {
+      const w = parseFloat(document.getElementById('weight').value);
+      const h = parseFloat(document.getElementById('height').value);
+      const sq = parseFloat(document.getElementById('squat').value);
+      const bn = parseFloat(document.getElementById('bench').value);
+      const dl = parseFloat(document.getElementById('deadlift').value);
+      const sex = document.getElementById('sex').value;
+
+      if (sq && bn && dl) {
+        document.getElementById('m-total').textContent = (sq + bn + dl).toFixed(0);
+        document.getElementById('m-sb').textContent = (sq / bn).toFixed(2);
+        document.getElementById('m-ds').textContent = (dl / sq).toFixed(2);
+
+        // Wilks formula (simplified)
+        if (w) {
+          const total = sq + bn + dl;
+          const a = sex === 'male'
+            ? [-216.0475144, 16.2606339, -0.002388645, -0.00113732, 7.01863E-06, -1.291E-08]
+            : [594.31747775582, -27.23842536447, 0.82112226871, -0.00930733913, 4.731582E-05, -9.054E-08];
+          const coeff = 500 / (a[0] + a[1] * w + a[2] * w ** 2 + a[3] * w ** 3 + a[4] * w ** 4 + a[5] * w ** 5);
+          document.getElementById('m-wilks').textContent = (coeff * total).toFixed(0);
+        } else {
+          document.getElementById('m-wilks').textContent = '—';
+        }
+      } else {
+        document.getElementById('m-total').textContent = '—';
+        document.getElementById('m-sb').textContent = '—';
+        document.getElementById('m-ds').textContent = '—';
+        document.getElementById('m-wilks').textContent = '—';
+      }
+
+      if (w && h) {
+        const bmi = w / ((h / 100) ** 2);
+        document.getElementById('m-bmi').textContent = bmi.toFixed(1);
+      } else {
+        document.getElementById('m-bmi').textContent = '—';
+      }
+    }
+
+    ['weight', 'height', 'squat', 'bench', 'deadlift', 'ohp', 'sex'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateMetrics);
+    });
+
+    // ─── MODULE SWITCHING ─────────────────────────────────────────────────────────
+    function switchModule(mod, btn) {
+      document.querySelectorAll('.module-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('mod-' + mod).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ─── ATHLETE PROFILE ──────────────────────────────────────────────────────────
+    function getProfile() {
+      return {
+        weight: document.getElementById('weight').value || 'not specified',
+        height: document.getElementById('height').value || 'not specified',
+        age: document.getElementById('age').value || 'not specified',
+        sex: document.getElementById('sex').value,
+        trainingDays: document.getElementById('trainingDays').value || '4',
+        sessionLength: document.getElementById('sessionLength').value || '75',
+        equipment: document.getElementById('equipment').value,
+        squat: document.getElementById('squat').value || 'not tested',
+        bench: document.getElementById('bench').value || 'not tested',
+        deadlift: document.getElementById('deadlift').value || 'not tested',
+        ohp: document.getElementById('ohp').value || 'not tested',
+      };
+    }
+
+    // ─── PROMPTS ──────────────────────────────────────────────────────────────────
+    function buildPrompt(module) {
+      const p = getProfile();
+
+      const prompts = {
+        programme: `You are an elite personal trainer and strength coach with 15 years of experience working with intermediate natural athletes.
+I am an intermediate lifter with 2 years of consistent training experience.
+My stats are: ${p.weight}kg bodyweight, ${p.height}cm tall, ${p.age} years old, ${p.sex}.
+My current 1RMs are: squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, overhead press ${p.ohp}kg.
+I can train ${p.trainingDays} days per week with sessions no longer than ${p.sessionLength} minutes.
+I have access to ${p.equipment}.
+My primary goal is hypertrophy with a secondary goal of building raw strength.
+Additional context: ${document.getElementById('prog-context').value || 'none'}
+
+Design me a complete 12-week periodised training programme.
+Include: the overall periodisation model you are using and why, the full weekly training split with reasoning, every session written out in full with exercise name, sets, reps, tempo, and rest periods, a week-by-week progressive overload strategy, instructions for deload weeks including when and how to run them, and a note on why each exercise was selected.
+Format this as a complete training plan I can print out and follow from day one.`,
+
+        plateau: `You are a strength coach who specialises in diagnosing and fixing training plateaus in intermediate lifters.
+I have been stuck on the following lifts for ${document.getElementById('plateau-weeks').value || 'several'} weeks despite training consistently:
+squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, overhead press ${p.ohp}kg.
+Here is my current programme in full: ${document.getElementById('plateau-prog').value || 'not described'}
+My average sleep is ${document.getElementById('plateau-sleep').value || '7'} hours per night.
+My stress levels are currently ${document.getElementById('plateau-stress').value} due to ${document.getElementById('plateau-stresssrc').value || 'various factors'}.
+My nutrition looks like this: ${document.getElementById('plateau-nutrition').value || 'not described'}
+I have been lifting for 2 years.
+My stats: ${p.weight}kg, ${p.height}cm, ${p.age} years old, ${p.sex}.
+
+Conduct a thorough analysis of every possible reason I may have plateaued across: programming (volume, intensity, frequency, exercise selection, progression model), recovery (sleep, stress, deload frequency), nutrition (calories, protein, timing), and training psychology (staleness, motivation, effort).
+Then build me a detailed 8-week plan specifically designed to break through each stall, with weekly targets, programming adjustments, technique focus points, and lifestyle changes.
+Prioritise the most likely causes based on the information I have given you.`,
+
+        weakpoints: `You are a physique coach and movement specialist with extensive experience helping intermediate lifters identify and systematically eliminate weak points in both their aesthetics and performance.
+My stats: ${p.weight}kg, ${p.height}cm, ${p.age} years old, ${p.sex}.
+My 1RMs: squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, OHP ${p.ohp}kg.
+Here are my perceived aesthetic weak points: ${document.getElementById('wp-aesthetic').value || 'not specified'}
+Here are my performance weak points: ${document.getElementById('wp-performance').value || 'not specified'}
+My current programme is: ${document.getElementById('wp-prog').value || 'not described'}
+
+For each weak point I have listed, give me: the most likely root cause broken down into whether it is a muscle imbalance, technique flaw, programming error, or structural limitation; specific corrective and strengthening exercises with sets, reps, tempo, and detailed coaching cues; clear instructions on how to integrate these into my existing programme without accumulating excessive fatigue; a realistic timeline for noticeable improvement in each area; and measurable markers that tell me the weak point is genuinely improving.
+Format this as a prioritised action plan I can begin implementing this week.`,
+
+        recovery: `You are a sports science expert and recovery specialist who works with intermediate to advanced strength athletes.
+I train ${p.trainingDays} days per week with high intensity.
+My stats: ${p.weight}kg, ${p.height}cm, ${p.age} years old, ${p.sex}.
+I currently sleep approximately ${document.getElementById('rec-sleep').value || '7'} hours per night.
+My work schedule is: ${document.getElementById('rec-schedule').value}.
+Specific recovery challenges: ${document.getElementById('rec-context').value || 'none specified'}
+
+Build me a complete, structured recovery protocol covering: an optimal sleep routine for a strength athlete; a daily mobility and soft tissue routine of no more than 20 minutes with specific exercises, duration, and instructions; breathing and nervous system downregulation techniques for post-training and before bed; a comprehensive deload strategy; nutrition strategies specifically for recovery including evening meal composition and overnight protein; evidence-based supplementation for recovery with specific dosing; and early warning signs of under-recovery with a clear protocol for what to do.
+Write this as a complete lifestyle system, not a list of disconnected tips.`,
+
+        injury: `You are a sports physiotherapist and strength coach who specialises in keeping intermediate lifters healthy, pain-free, and training consistently for the long term.
+My stats: ${p.weight}kg, ${p.height}cm, ${p.age} years old, ${p.sex}. Training ${p.trainingDays} days/week.
+My 1RMs: squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, OHP ${p.ohp}kg.
+Injury history and current niggles: ${document.getElementById('inj-history').value || 'none significant'}
+Movement concerns: ${document.getElementById('inj-movement').value || 'none specified'}
+
+I want a comprehensive, proactive injury prevention plan built specifically around heavy compound lifting. Cover: the most common injuries associated with squat, bench, deadlift, OHP, and rows; a complete prehab routine of no more than 20 minutes for 3x per week covering shoulders, hips, knees, lower back, and elbows; a smart warm-up protocol for heavy training; a framework for training around minor niggles; red flags distinguishing real injury from normal soreness; a return-to-training protocol after short layoff; and technique adjustments for each major lift that reduce joint stress.
+Write this as a thorough, practical physiotherapy consultation.`,
+
+        tracking: `You are a high-performance coach who specialises in data-driven accountability systems for intermediate lifters.
+My stats: ${p.weight}kg, ${p.height}cm, ${p.age} years old, ${p.sex}. Training ${p.trainingDays} days/week.
+My 1RMs: squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, OHP ${p.ohp}kg.
+Primary goal: ${document.getElementById('track-goal').value}
+Programme duration: ${document.getElementById('track-weeks').value || '12'} weeks
+Previous tracking experience: ${document.getElementById('track-context').value || 'basic'}
+
+Design a complete monitoring framework including: a weekly check-in template covering bodyweight, lift numbers, subjective scores for energy/recovery/mood, sleep, and nutritional adherence; a photo progress protocol; a muscle measurement protocol; a data-driven decision-making guide with specific rules (e.g. if weight hasn't moved in 2 weeks do X); a monthly review framework; and a section on the psychology of tracking.
+Make this feel like the monitoring system of a professional athlete.`,
+
+        recomp: `You are an elite strength coach and sports nutritionist specialising in body recomposition for intermediate natural lifters.
+My stats: ${p.weight}kg bodyweight, ${p.height}cm tall, ${p.age} years old, ${p.sex}, approximately ${document.getElementById('recomp-bf').value || 'unknown'}% body fat.
+I have been training consistently for ${document.getElementById('recomp-years').value || '2'} years.
+My current lifts: squat ${p.squat}kg, bench ${p.bench}kg, deadlift ${p.deadlift}kg, OHP ${p.ohp}kg.
+I can train ${p.trainingDays} days per week.
+Current diet and specific goals: ${document.getElementById('recomp-context').value || 'not described'}
+
+Build me a complete recomposition blueprint covering: an honest assessment of whether recomposition is achievable for my stats; a complete training programme optimised for recomposition; a detailed nutrition strategy with calorie targets, macro breakdown, meal timing, and training vs rest day eating; a cardio strategy that supports fat loss without compromising muscle; a tracking protocol for confirming recomposition is occurring; how to adjust the plan at 4, 8, and 12 weeks; and the most common mistakes to avoid.
+Make this a complete, actionable 16-week system.`
+      };
+
+      return prompts[module];
+    }
+
+    // ─── GENERATE ─────────────────────────────────────────────────────────────────
+    async function generate(module) {
+      const prompt = buildPrompt(module);
+      const respDiv = document.getElementById('resp-' + module);
+
+      respDiv.innerHTML = `
+    <div class="loading-state">
+      <div class="loading-bars">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      </div>
+      <div class="loading-text">AI COACH THINKING...</div>
+    </div>
+  `;
+
+      // Disable button
+      const btn = document.querySelector(`#mod-${module} .generate-btn`);
+      if (btn) btn.disabled = true;
+
+      try {
+        const OPENROUTER_KEY = "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";
+        const MODEL = "google/gemini-2.0-flash-001"; // change to any OpenRouter model
+
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${OPENROUTER_KEY}`,
+            "HTTP-Referer": window.location.href,
+            "X-Title": "FORGE - Elite Training Intelligence"
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+
+        const text = data.choices?.[0]?.message?.content || '';
+        renderResponse(respDiv, text, module);
+
+      } catch (err) {
+        respDiv.innerHTML = `<div class="error-state">⚠ ERROR: ${err.message}</div>`;
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function renderResponse(container, text, module) {
+      const moduleNames = {
+        programme: '12-WEEK TRAINING PROGRAMME',
+        plateau: 'PLATEAU ANALYSIS & BREAKTHROUGH PLAN',
+        weakpoints: 'WEAK POINT ACTION PLAN',
+        recovery: 'RECOVERY PROTOCOL',
+        injury: 'INJURY PREVENTION PLAN',
+        tracking: 'TRACKING SYSTEM',
+        recomp: '16-WEEK RECOMP BLUEPRINT'
+      };
+
+      // Format markdown-like content
+      const formatted = text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`);
+
+      container.innerHTML = `
+    <div class="ai-response">
+      <div class="response-header">
+        <div class="response-meta">
+          <span class="ai-badge">FORGE AI</span>
+          <span class="response-title">${moduleNames[module] || module.toUpperCase()}</span>
+        </div>
+        <button class="copy-btn" onclick="copyResponse(this)">COPY</button>
+      </div>
+      <div class="response-content" data-raw="${encodeURIComponent(text)}">${formatted}</div>
+    </div>
+  `;
+    }
+
+    function copyResponse(btn) {
+      const content = btn.closest('.ai-response').querySelector('.response-content');
+      const raw = decodeURIComponent(content.getAttribute('data-raw'));
+      navigator.clipboard.writeText(raw).then(() => {
+        btn.textContent = 'COPIED ✓';
+        setTimeout(() => btn.textContent = 'COPY', 2000);
+      });
+    }
+  </script>
+</body>
+
+</html>
